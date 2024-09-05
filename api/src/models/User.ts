@@ -1,11 +1,15 @@
-// src/models/User.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
 } from "typeorm"
+import { ChatroomMessage } from "./ChatroomMessage"
+import { Chatroom } from "./Chatroom"
 
 @Entity()
 export class User {
@@ -17,6 +21,17 @@ export class User {
 
   @Column()
   password!: string
+
+  @ManyToMany(() => User, (user) => user.friends)
+  @JoinTable()
+  friends!: User[]
+
+  @ManyToMany(() => Chatroom, (chatroom) => chatroom.users)
+  @JoinTable() // You need a join table here
+  chatrooms!: Chatroom[]
+
+  @OneToMany(() => ChatroomMessage, (message) => message.user)
+  messages!: ChatroomMessage[]
 
   @CreateDateColumn()
   createdAt!: Date

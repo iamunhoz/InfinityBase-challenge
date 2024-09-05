@@ -1,4 +1,3 @@
-// src/models/UserToUserMessage.ts
 import {
   Entity,
   PrimaryGeneratedColumn,

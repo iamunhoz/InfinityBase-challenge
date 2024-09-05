@@ -12,13 +12,11 @@ class UserService {
   }
 
   async newUser(user: { email: string; password: string }): Promise<UserSafe> {
-    // Validate the email is unique
     const existingUser = await this.userQuery.findOneBy({ email: user.email })
     if (existingUser) {
       throw new Error("User with this email already exists.")
     }
 
-    // Validate password length (example rule: must be at least 6 characters)
     if (user.password.length < 16) {
       throw new Error("Password must be at least 16 characters long.")
     }

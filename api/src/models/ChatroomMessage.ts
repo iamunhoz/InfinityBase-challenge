@@ -1,4 +1,3 @@
-// src/models/ChatroomMessage.ts
 import {
   Entity,
   PrimaryGeneratedColumn,

@@ -8,7 +8,7 @@ class AuthService {
     this.userRepository = new UserRepository()
   }
 
-  private JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"
+  private JWT_SECRET = process.env.JWT_SECRET || "umdoistres456seteoitonove10"
   async login({
     email,
     password,
@@ -22,16 +22,14 @@ class AuthService {
       throw new Error("Invalid email or password")
     }
 
-    // Assuming password validation (in reality, you should hash the password and compare it)
     if (user.password !== password) {
       throw new Error("Invalid email or password")
     }
 
-    // Generate JWT
     const token = jwt.sign(
-      { id: user.id, email: user.email }, // Payload (user's ID and email)
-      this.JWT_SECRET, // Secret key
-      { expiresIn: "1h" } // Token expiration
+      { id: user.id, email: user.email },
+      this.JWT_SECRET,
+      { expiresIn: "1h" }
     )
 
     return token

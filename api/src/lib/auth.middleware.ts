@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Response, NextFunction } from "express"
+import { Response, NextFunction, Request } from "express"
 import * as jwt from "jsonwebtoken"
 
 class Auth {
   private JWT_SECRET: string
 
   constructor() {
-    this.JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"
+    this.JWT_SECRET = process.env.JWT_SECRET || "umdoistres456seteoitonove10"
     this.check = this.check.bind(this)
   }
 
-  public check(req: any, res: Response, next: NextFunction) {
+  public check(req: Request, res: Response, next: NextFunction) {
     const { headers } = req
     const authHeader = headers.authorization
 
@@ -19,7 +18,6 @@ class Auth {
 
       try {
         const jwtVerification = jwt.verify(token, this.JWT_SECRET)
-        // Attach decoded JWT data to res.locals or req for further use
         res.locals.jwtVerification = jwtVerification
         next()
       } catch (error: any) {
