@@ -42,37 +42,26 @@ export const postRequest = async <T>(
 type RequestResponse<T> =
   | {
       success: true
-      data: T
+      result: T
     }
   | {
       success: false
       error?: unknown
     }
+
+type BaseResponse<T> = {
+  data: RequestResponse<T>
+  status: number
+  statusText: string
+}
 const apiRequest = async <T>(
   axiosConfig: AxiosRequestConfig
 ): Promise<RequestResponse<T>> => {
   try {
-    const response = await axiosInstance(axiosConfig)
-    const data = response.data.data || response.data
+    const response: BaseResponse<T> = await axiosInstance(axiosConfig)
 
-    if (!response.data.success) {
-      // toast.error(response.data.message);
-
-      return {
-        success: false,
-      }
-    } else {
-      //REQUISIÇÕES DIFERENTES DE GET QUE POSSUEM MENSAGEM DA API
-      if (axiosConfig.method !== "GET" && !!response.data.message) {
-        // toast.success(response.data.message);
-      }
-      // REQUISIÇÕES DIFERENTES DE GET QUE NAO POSSUEM MENSAGEM DA API
-
-      return {
-        success: true,
-        data: data as T,
-      }
-    }
+    // console.log("apiRequest response", response)
+    return response.data
   } catch (error) {
     if ((error as AxiosError).response) {
       // The request was made and the server responded with a status code

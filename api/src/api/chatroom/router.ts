@@ -33,7 +33,10 @@ chatroomRouter.post(
 )
 
 // Route to get all chatrooms that the user is part of
-chatroomRouter.get("/", AuthMiddleware.check, ChatroomController.getChatrooms)
+chatroomRouter.get(
+  "/",
+  /* AuthMiddleware.check, */ ChatroomController.getChatrooms
+)
 
 // Optional: Route to fetch all messages from a specific chatroom
 chatroomRouter.get(

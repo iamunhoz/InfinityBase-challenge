@@ -7,12 +7,17 @@
     "start": "node --env-file=.env dist/index.js",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register -r dotenv/config src/index.ts",
     "debug": "nodemon --exec ts-node -r tsconfig-paths/register -r dotenv/config src/debug.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migration:generate": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate",
+    "migration:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create",
+    "migration:run": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
@@ -20,6 +25,7 @@
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "nodemon": "^3.1.4",

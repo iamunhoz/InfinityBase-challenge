@@ -7,16 +7,13 @@ export class UserRepository {
   async createUser({
     email,
     password,
+    name,
   }: {
     email: string
     password: string
+    name: string
   }): Promise<User> {
-    const existingUser = await this.userQuery.findOneBy({ email })
-    if (existingUser) {
-      throw new Error("User already exists")
-    }
-
-    const newUser = this.userQuery.create({ email, password })
+    const newUser = this.userQuery.create({ email, password, name })
     return this.userQuery.save(newUser)
   }
 

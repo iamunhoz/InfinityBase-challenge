@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import Validations from "src/lib/validations"
 import UserService from "./service"
+import { handleRequestResponse } from "src/lib/controller-handler"
 
 class UserController {
   accountService = UserService
@@ -11,50 +12,46 @@ class UserController {
     this.validations = Validations
 
     this.createUser = this.createUser.bind(this)
+    this.getUserById = this.getUserById.bind(this)
   }
 
+  // POST /user/create
   async createUser(req: Request, res: Response) {
-    try {
-      const { password, email } = this.validations.validateDto<{
+    return handleRequestResponse(req, res, async () => {
+      const { password, email, name } = this.validations.validateDto<{
         password: string
         email: string
-      }>(req.body, ["email", "password"])
+        name: string
+      }>(req.body, ["email", "password", "name"])
 
-      // Create a new account
-      const newUser = await this.accountService.newUser({
+      // Create a new user account
+      return await this.accountService.newUser({
         email,
         password,
+        name,
       })
-
-      res.status(200).json({
-        newUser,
-      })
-    } catch (error) {
-      res.status(500).send(`request failed due to: ${error}`)
-    }
+    })
   }
 
+  // GET /user?id=<userId>
   async getUserById(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const id = req.query.id as string
 
       if (!id) {
-        return res.status(400).json({ message: "User ID is required" })
+        throw new Error("User ID is required")
       }
 
       const user = await UserService.getUserById({ id })
 
       if (!user) {
-        return res.status(404).json({ message: "User not found" })
+        throw new Error("User not found")
       }
 
-      return res.status(200).json({ user })
-    } catch (error) {
-      return res.status(500).json({ message: `Error: ${error}` })
-    }
+      return user
+    })
   }
 }
 
 const userController = new UserController()
-
 export { userController }

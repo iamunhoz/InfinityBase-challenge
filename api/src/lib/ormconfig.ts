@@ -11,4 +11,5 @@ export const AppDataSource = new DataSource({
   entities: [User, Chatroom, ChatroomMessage, UserToUserMessage],
   synchronize: true,
   logging: false,
+  migrations: ["src/migration/*.ts"],
 })

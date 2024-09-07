@@ -22,6 +22,9 @@ export class User {
   @Column()
   password!: string
 
+  @Column({ default: "Anonymous" }) // Add the new column for 'name'
+  name!: string
+
   @ManyToMany(() => User, (user) => user.friends)
   @JoinTable()
   friends!: User[]

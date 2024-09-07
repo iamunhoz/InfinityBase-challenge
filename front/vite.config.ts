@@ -1,5 +1,6 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react-swc"
+import tailwindcss from "tailwindcss"
 // @ts-ignore
 import { fileURLToPath } from "url"
 // @ts-ignore
@@ -15,6 +16,11 @@ export default defineConfig({
   resolve: {
     alias: {
       src: path.resolve(__dirname, "./src"),
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [tailwindcss],
     },
   },
 })

@@ -109,7 +109,13 @@ class ChatroomService {
     return message
   }
 
-  async getChatrooms({ userId }: { userId: string }) {
+  async getChatrooms() {
+    // Get all chatrooms for the user
+    const chatrooms = await this.chatroomRepository.getChatrooms()
+    return chatrooms
+  }
+
+  async getChatroomsForUser({ userId }: { userId: string }) {
     // Get all chatrooms for the user
     const chatrooms = await this.chatroomRepository.getChatroomsForUser({
       userId,

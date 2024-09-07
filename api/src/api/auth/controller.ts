@@ -1,5 +1,7 @@
 import { Request, Response } from "express"
 import AuthService from "./service"
+import { handleRequestResponse } from "src/lib/controller-handler"
+import validations from "src/lib/validations"
 
 class AuthController {
   constructor() {
@@ -7,21 +9,14 @@ class AuthController {
   }
 
   async login(req: Request, res: Response) {
-    try {
-      const { email, password } = req.body
+    handleRequestResponse(req, res, async () => {
+      const { password, email } = validations.validateDto<{
+        password: string
+        email: string
+      }>(req.body, ["email", "password"])
 
-      if (!email || !password) {
-        return res
-          .status(400)
-          .json({ message: "Email and password are required" })
-      }
-
-      const token = await AuthService.login({ email, password })
-
-      return res.status(200).json({ token })
-    } catch (error) {
-      return res.status(401).json({ message: error })
-    }
+      return await AuthService.login({ email, password })
+    })
   }
 }
 

@@ -95,6 +95,14 @@ class ChatroomRepository {
     return await this.chatroomMessageQuery.save(newMessage)
   }
 
+  async getChatrooms(): Promise<Chatroom[]> {
+    const chatrooms = await this.chatroomQuery.find()
+
+    if (!chatrooms) throw new Error("No chatrooms found")
+
+    return chatrooms
+  }
+
   async getChatroomsForUser({
     userId,
   }: {

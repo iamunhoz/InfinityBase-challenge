@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import ChatroomService from "src/api/chatroom/service"
+import { handleRequestResponse } from "src/lib/controller-handler"
 
 class ChatroomController {
   constructor() {
@@ -10,116 +11,92 @@ class ChatroomController {
     this.getChatrooms = this.getChatrooms.bind(this)
     this.getMessagesFromChatroom = this.getMessagesFromChatroom.bind(this)
     this.deleteMessageFromChatroom = this.deleteMessageFromChatroom.bind(this)
+    this.getChatroomsForUser = this.getChatroomsForUser.bind(this)
+    this.listUsersInChatroom = this.listUsersInChatroom.bind(this)
   }
 
   // POST /create
   async createChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { name } = req.body
       const userId = res.locals.jwtVerification.id
-
-      const chatroom = await ChatroomService.createChatroom({ name, userId })
-      return res.status(201).json({ success: true, chatroom })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+      return await ChatroomService.createChatroom({ name, userId })
+    })
   }
 
   // POST /enter
   async enterChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { chatroomId } = req.body
       const userId = res.locals.jwtVerification.id
-
-      const result = await ChatroomService.enterChatroom({ chatroomId, userId })
-      return res.status(200).json({ success: true, result })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+      return await ChatroomService.enterChatroom({ chatroomId, userId })
+    })
   }
 
   // POST /leave
   async leaveChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { chatroomId } = req.body
       const userId = res.locals.jwtVerification.id
-
-      const result = await ChatroomService.leaveChatroom({ chatroomId, userId })
-      return res.status(200).json({ success: true, result })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+      return await ChatroomService.leaveChatroom({ chatroomId, userId })
+    })
   }
 
   // POST /:chatroomId/message
   async postMessageToChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { content, chatroomId } = req.body
       const userId = res.locals.jwtVerification.id
-
-      const message = await ChatroomService.postMessageToChatroom({
+      return await ChatroomService.postMessageToChatroom({
         chatroomId,
         userId,
         content,
       })
-      return res.status(201).json({ success: true, message })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+    })
   }
 
   // GET / (get all chatrooms for the user)
-  async getChatrooms(req: Request, res: Response) {
-    try {
+  async getChatroomsForUser(req: Request, res: Response) {
+    return handleRequestResponse(req, res, async () => {
       const userId = res.locals.jwtVerification.id
+      return await ChatroomService.getChatroomsForUser({ userId })
+    })
+  }
 
-      const chatrooms = await ChatroomService.getChatrooms({ userId })
-      return res.status(200).json({ success: true, chatrooms })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+  // GET / (get all chatrooms)
+  async getChatrooms(req: Request, res: Response) {
+    return handleRequestResponse(req, res, async () => {
+      return await ChatroomService.getChatrooms()
+    })
   }
 
   // GET /:chatroomId/messages (optional)
   async getMessagesFromChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { chatroomId } = req.params
-
-      const messages = await ChatroomService.getMessagesFromChatroom({
-        chatroomId,
-      })
-      return res.status(200).json({ success: true, messages })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+      return await ChatroomService.getMessagesFromChatroom({ chatroomId })
+    })
   }
 
   // DELETE /:chatroomId/message/:messageId (optional)
   async deleteMessageFromChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { chatroomId, messageId } = req.params
       const userId = res.locals.jwtVerification.id
-
-      const result = await ChatroomService.deleteMessageFromChatroom({
+      return await ChatroomService.deleteMessageFromChatroom({
         chatroomId,
         messageId,
         userId,
       })
-      return res.status(200).json({ success: true, result })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+    })
   }
 
+  // GET /:chatroomId/users
   async listUsersInChatroom(req: Request, res: Response) {
-    try {
+    return handleRequestResponse(req, res, async () => {
       const { chatroomId } = req.params
-      const users = await ChatroomService.listUsersInChatroom({ chatroomId })
-
-      return res.status(200).json({ success: true, users })
-    } catch (error: any) {
-      return res.status(500).json({ success: false, message: error.message })
-    }
+      return await ChatroomService.listUsersInChatroom({ chatroomId })
+    })
   }
 }
 

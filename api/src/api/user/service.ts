@@ -11,7 +11,11 @@ class UserService {
     this.userRepository = new UserRepository()
   }
 
-  async newUser(user: { email: string; password: string }): Promise<UserSafe> {
+  async newUser(user: {
+    email: string
+    password: string
+    name: string
+  }): Promise<UserSafe> {
     const existingUser = await this.userQuery.findOneBy({ email: user.email })
     if (existingUser) {
       throw new Error("User with this email already exists.")

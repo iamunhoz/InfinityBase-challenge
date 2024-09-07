@@ -1,0 +1,54 @@
+.blurred-corners::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+      circle at top left,
+      rgba(0, 123, 255, 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(0, 123, 255, 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(0, 123, 255, 0.5),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(0, 123, 255, 0.5),
+      transparent 60%
+    );
+  filter: blur(80px);
+}
+
+.glow-effect::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  border-radius: 12px;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 200, 255, 0.6),
+    rgba(100, 150, 255, 0.6)
+  );
+  filter: blur(8px);
+  z-index: -1;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.glow-effect:hover::before {
+  opacity: 1;
+}
