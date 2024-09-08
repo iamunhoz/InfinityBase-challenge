@@ -13,6 +13,18 @@ class ChatroomController {
     this.deleteMessageFromChatroom = this.deleteMessageFromChatroom.bind(this)
     this.getChatroomsForUser = this.getChatroomsForUser.bind(this)
     this.listUsersInChatroom = this.listUsersInChatroom.bind(this)
+    this.getChatroomById = this.getChatroomById.bind(this)
+  }
+
+  async getChatroomById(req: Request, res: Response) {
+    return handleRequestResponse(req, res, async () => {
+      const chatroomId = req.query.chatroomId
+
+      if (!chatroomId || typeof chatroomId !== "string") {
+        throw new Error("wrong chatroom id")
+      }
+      return await ChatroomService.getChatroomById({ chatroomId })
+    })
   }
 
   // POST /create
@@ -20,6 +32,10 @@ class ChatroomController {
     return handleRequestResponse(req, res, async () => {
       const { name } = req.body
       const userId = res.locals.jwtVerification.id
+
+      if (!userId) {
+        throw new Error("please log in first")
+      }
       return await ChatroomService.createChatroom({ name, userId })
     })
   }
@@ -29,6 +45,7 @@ class ChatroomController {
     return handleRequestResponse(req, res, async () => {
       const { chatroomId } = req.body
       const userId = res.locals.jwtVerification.id
+      console.log("chatroomId, userId", chatroomId, userId)
       return await ChatroomService.enterChatroom({ chatroomId, userId })
     })
   }

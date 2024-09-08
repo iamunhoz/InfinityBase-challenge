@@ -30,7 +30,7 @@ export function AppLayout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 p-4 mt-auto">
+      <footer /* className="bg-gray-800 p-4 mt-auto" */>
         {/* Empty footer for now */}
       </footer>
     </div>

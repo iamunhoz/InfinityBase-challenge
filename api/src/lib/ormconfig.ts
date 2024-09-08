@@ -10,6 +10,7 @@ export const AppDataSource = new DataSource({
   database: "discord_clone",
   entities: [User, Chatroom, ChatroomMessage, UserToUserMessage],
   synchronize: true,
+  dropSchema: process.env.NODE_ENV === "development",
   logging: false,
   migrations: ["src/migration/*.ts"],
 })

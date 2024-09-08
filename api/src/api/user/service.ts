@@ -1,9 +1,12 @@
 import UserRepository from "./repository"
 import { User, UserSafe } from "src/models/User"
 import { AppDataSource } from "src/lib/ormconfig"
+import jwt from "jsonwebtoken"
 
 class UserService {
   private userQuery = AppDataSource.getRepository(User)
+  private JWT_SECRET = process.env.JWT_SECRET || "umdoistres456seteoitonove10"
+
   userRepository: UserRepository
 
   constructor() {
@@ -15,7 +18,7 @@ class UserService {
     email: string
     password: string
     name: string
-  }): Promise<UserSafe> {
+  }): Promise<UserSafe & { token: string }> {
     const existingUser = await this.userQuery.findOneBy({ email: user.email })
     if (existingUser) {
       throw new Error("User with this email already exists.")
@@ -30,7 +33,13 @@ class UserService {
       user
     )
 
-    return newUser
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email },
+      this.JWT_SECRET,
+      { expiresIn: "7d" }
+    )
+
+    return { ...newUser, token }
   }
 
   async getUserById({ id }: { id: string }): Promise<UserSafe | null> {

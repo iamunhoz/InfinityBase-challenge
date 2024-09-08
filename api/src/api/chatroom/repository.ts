@@ -15,8 +15,12 @@ class ChatroomRepository {
     name: string
     userId: string
   }): Promise<Chatroom> {
+    console.log("create chatroom called")
+
     const newChatroom = this.chatroomQuery.create({ name })
+    console.log("newChatroom", newChatroom)
     const savedChatroom = await this.chatroomQuery.save(newChatroom)
+    console.log("savedChatroom", savedChatroom)
 
     // Add the creator to the chatroom
     await this.addUserToChatroom({ chatroomId: savedChatroom.id, userId })
@@ -42,14 +46,16 @@ class ChatroomRepository {
   }: {
     chatroomId: string
     userId: string
-  }): Promise<void> {
+  }): Promise<Chatroom | null> {
     const chatroom = await this.getChatroomById({ chatroomId })
     const user = await this.userQuery.findOneBy({ id: userId })
 
     if (chatroom && user) {
       chatroom.users.push(user)
-      await this.chatroomQuery.save(chatroom) // Save the updated chatroom with the new user
+      return await this.chatroomQuery.save(chatroom) // Save the updated chatroom with the new user
     }
+
+    return null
   }
 
   async removeUserFromChatroom({
@@ -60,7 +66,7 @@ class ChatroomRepository {
     userId: string
   }): Promise<void> {
     const chatroom = await this.getChatroomById({ chatroomId })
-    if (!chatroom) throw new Error("Chatroom not found")
+    if (!chatroom) throw new Error("removeUserFromChatroom: Chatroom not found")
 
     chatroom.users = chatroom.users.filter((user) => user.id !== userId)
     await this.chatroomQuery.save(chatroom) // Save the updated chatroom without the user
@@ -80,10 +86,10 @@ class ChatroomRepository {
 
     // Ensure the chatroom and user exist
     if (!chatroom) {
-      throw new Error("Chatroom not found")
+      throw new Error("postMessageToChatroom: Chatroom not found")
     }
     if (!user) {
-      throw new Error("User not found")
+      throw new Error("postMessageToChatroom: User not found")
     }
 
     const newMessage = this.chatroomMessageQuery.create({
@@ -124,7 +130,7 @@ class ChatroomRepository {
     chatroomId: string
   }): Promise<ChatroomMessage[]> {
     const messages = await this.chatroomMessageQuery.find({
-      where: { id: chatroomId },
+      where: { chatroom: { id: chatroomId } },
       relations: ["user"], // If you need to load the user who sent each message
       order: { createdAt: "ASC" }, // Optionally order by creation time
     })

@@ -5,7 +5,7 @@ import { postRequest } from "src/lib/network/baseRequests"
 import useAppStore from "src/store/authStore"
 
 export function SignUpPage(): JSX.Element {
-  const [name, setName] = useState<string>("")
+  const [name, setName] = useState<string>("seconduser")
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [error, setError] = useState<string | null>(null)
@@ -16,13 +16,14 @@ export function SignUpPage(): JSX.Element {
   // Define mutation for sign-up
   const signUpMutation = useMutation({
     mutationFn: async () =>
-      postRequest<string>("/user/new", { name, email, password }),
-    onSuccess: (data) => {
+      postRequest<any>("/user/new", { name, email, password }),
+    onSuccess: (data: any) => {
+      console.log("postrequest mutation result", data)
       if (data.success) {
         // Store the token in localStorage
-        localStorage.setItem("token", data.result)
+        localStorage.setItem("token", data.result.token)
         setIsLoggedIn(true)
-        navigate("/") // Redirect to the homepage
+        navigate("/app") // Redirect to the homepage
       } else {
         setError("Sign-up failed. Please try again.")
         setIsLoggedIn(false)

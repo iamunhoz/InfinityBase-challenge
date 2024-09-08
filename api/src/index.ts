@@ -3,6 +3,8 @@ import { Routes } from "src/lib/routes"
 import { serverData } from "src/lib/config"
 import { AppDataSource } from "src/lib/ormconfig"
 import cors from "cors"
+import Socket from "./socket"
+import { seedDatabase } from "./lib/db.dev.seeder"
 
 const app = express()
 app.use(express.json())
@@ -15,9 +17,12 @@ app.use(
   })
 )
 
+Socket.initialize(app)
+
 AppDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized")
+  .then(async () => {
+    console.log("Database has been initialized")
+    await seedDatabase(AppDataSource)
     new Routes(app)
     app.listen(serverData.port, () => {
       console.log(

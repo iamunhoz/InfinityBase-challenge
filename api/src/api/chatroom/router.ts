@@ -38,6 +38,11 @@ chatroomRouter.get(
   /* AuthMiddleware.check, */ ChatroomController.getChatrooms
 )
 
+chatroomRouter.get(
+  "/byid",
+  /* AuthMiddleware.check, */ ChatroomController.getChatroomById
+)
+
 // Optional: Route to fetch all messages from a specific chatroom
 chatroomRouter.get(
   "/:chatroomId/messages",

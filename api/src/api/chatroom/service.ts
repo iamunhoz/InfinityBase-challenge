@@ -1,6 +1,7 @@
 import ChatroomRepository from "src/api/chatroom/repository"
 import { UserRepository } from "src/api/user/repository"
-import { User } from "src/models"
+import { Chatroom, User } from "src/models"
+import Socket from "src/socket"
 
 class ChatroomService {
   private chatroomRepository: ChatroomRepository
@@ -9,6 +10,14 @@ class ChatroomService {
   constructor() {
     this.chatroomRepository = new ChatroomRepository()
     this.userRepository = new UserRepository()
+  }
+
+  async getChatroomById({ chatroomId }: { chatroomId: string }) {
+    const chatroom = await this.chatroomRepository.getChatroomById({
+      chatroomId,
+    })
+
+    return chatroom
   }
 
   async createChatroom({ name, userId }: { name: string; userId: string }) {
@@ -23,6 +32,10 @@ class ChatroomService {
       name,
       userId,
     })
+
+    if (chatroom) {
+      Socket.emitNewChatroom(chatroom)
+    }
     return chatroom
   }
 
@@ -32,13 +45,13 @@ class ChatroomService {
   }: {
     chatroomId: string
     userId: string
-  }) {
+  }): Promise<Chatroom | null> {
     // Ensure chatroom exists
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
     if (!chatroom) {
-      throw new Error("Chatroom not found")
+      throw new Error("enterChatroom: Chatroom not found")
     }
 
     // Add user to chatroom
@@ -61,7 +74,7 @@ class ChatroomService {
       chatroomId,
     })
     if (!chatroom) {
-      throw new Error("Chatroom not found")
+      throw new Error("leaveChatroom: Chatroom not found")
     }
 
     // Remove user from chatroom
@@ -86,7 +99,7 @@ class ChatroomService {
       chatroomId,
     })
     if (!chatroom) {
-      throw new Error("Chatroom not found")
+      throw new Error("postMessageToChatroom: Chatroom not found")
     }
 
     const user = await this.userRepository.getUserById({ id: userId })
@@ -128,14 +141,18 @@ class ChatroomService {
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
+
     if (!chatroom) {
-      throw new Error("Chatroom not found")
+      throw new Error("getMessagesFromChatroom: Chatroom not found")
     }
 
     // Get all messages from the chatroom
     const messages = await this.chatroomRepository.getMessagesFromChatroom({
       chatroomId,
     })
+
+    console.log("messages", messages)
+
     return messages
   }
 
@@ -177,7 +194,7 @@ class ChatroomService {
     })
 
     if (!chatroom) {
-      throw new Error("Chatroom not found")
+      throw new Error("listUsersInChatroom: Chatroom not found")
     }
 
     return chatroom.users // Return the list of users

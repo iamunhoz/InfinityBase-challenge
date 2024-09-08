@@ -2,25 +2,30 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { postRequest } from "src/lib/network/baseRequests"
-import useAppStore from "src/store/authStore"
+import useAuthStore from "src/store/authStore"
 
 export function LoginPage(): JSX.Element {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [error, setError] = useState<string | null>(null)
-  const { setIsLoggedIn } = useAppStore()
+  const { setIsLoggedIn, setUserId } = useAuthStore()
 
   const navigate = useNavigate()
 
   // Define mutation for login
   const loginMutation = useMutation({
     mutationFn: async () =>
-      postRequest<string>("/auth/login", { email, password }),
+      postRequest<{ token: string; id: string }>("/auth/login", {
+        email,
+        password,
+      }),
     onSuccess: (data) => {
       if (data.success) {
         // Store the token in localStorage
-        localStorage.setItem("token", data.result)
+        console.log("login result data", data)
+        localStorage.setItem("token", data.result.token)
         setIsLoggedIn(true)
+        setUserId(data.result.id)
         navigate("/app") // Redirect to the homepage
       } else {
         setError("Login failed. Please check your credentials.")

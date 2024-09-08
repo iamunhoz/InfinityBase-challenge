@@ -15,7 +15,7 @@ class AuthService {
   }: {
     email: string
     password: string
-  }): Promise<string> {
+  }): Promise<{ token: string; id: string }> {
     const user = await this.userRepository.findUserByEmail({ email })
 
     if (!user) {
@@ -29,10 +29,10 @@ class AuthService {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       this.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     )
 
-    return token
+    return { token, id: user.id }
   }
 }
 
