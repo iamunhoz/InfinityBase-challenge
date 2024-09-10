@@ -1,5 +1,6 @@
 import UserRepository from "src/api/user/repository"
 import jwt from "jsonwebtoken"
+import { User } from "src/models"
 
 class AuthService {
   private userRepository: UserRepository
@@ -15,7 +16,7 @@ class AuthService {
   }: {
     email: string
     password: string
-  }): Promise<{ token: string; id: string }> {
+  }): Promise<{ token: string; user: User }> {
     const user = await this.userRepository.findUserByEmail({ email })
 
     if (!user) {
@@ -32,7 +33,7 @@ class AuthService {
       { expiresIn: "7d" }
     )
 
-    return { token, id: user.id }
+    return { token, user }
   }
 }
 

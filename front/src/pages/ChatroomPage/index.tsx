@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import { Box, Button, Input } from "@chakra-ui/react"
-import { useToast } from "@chakra-ui/react"
 import { socketClient } from "src/lib/network/socket"
 import {
   useChatroomMessages,
@@ -14,72 +13,85 @@ import {
 import useAuthStore from "src/store/authStore"
 
 export function ChatroomPage(): JSX.Element {
-  const { id: _id } = useParams<{ id: string }>() // Chatroom ID from URL
-  const id = _id ? _id : ""
-  const { data: chatroom, isLoading: chatIsLoading } = useGetChatroomData(id)
-  const { userId } = useAuthStore()
+  const { id } = useParams<{ id: string }>()
+  const chatroomId = id ? id : ""
+  const { data: chatroom, isLoading: chatIsLoading } =
+    useGetChatroomData(chatroomId)
+  const { user } = useAuthStore()
 
-  const userBelongsToChatroom = useMemo(() => {
-    console.log("chatroom, userId", chatroom, userId)
-    return chatroom?.users.some((user) => user.id === userId)
-  }, [chatroom, userId])
-
-  useEffect(() => {
-    // console.log("chatroom", chatroom)
-  }, [chatroom])
+  const userBelongsToChatroom = chatroom?.users.some(
+    (room_user) => room_user.id === user.id
+  )
 
   const queryClient = useQueryClient()
-  const toast = useToast()
-
-  // State to track if the user has joined the chatroom
   const [newMessage, setNewMessage] = useState("")
 
-  // Fetch chatroom messages
-  const { data: messages, isLoading: messagesLoading } = useChatroomMessages(id)
-  const { data: users, isLoading: usersLoading } = useChatroomUsers(id)
+  const { data: messages, isLoading: messagesLoading } =
+    useChatroomMessages(chatroomId)
+  const { data: users, isLoading: usersLoading } = useChatroomUsers(chatroomId)
 
-  // Mutation to post a new message
-  const postMessageMutation = usePostMessage(id, queryClient)
+  const postMessageMutation = usePostMessage(chatroomId, queryClient)
 
-  // Mutation to join the chatroom
-  const joinChatroomMutation = useJoinChatroomMutation(id, () => {
-    // setHasJoined(true)
-
-    socketClient.emit("joinChatroom", id) // Join the chatroom via socket
+  const joinChatroomMutation = useJoinChatroomMutation({
+    chatroomId,
+    userId: user.id as string,
+    userName: user.name as string,
   })
 
-  // Socket listener for new messages
   useEffect(() => {
     if (userBelongsToChatroom) {
-      socketClient.on("newMessage", () => {
+      socketClient.on("new-message", () => {
+        console.log("new-message arrived")
         queryClient.invalidateQueries({
-          queryKey: ["chatroomMessages", id],
-          refetchType: "all",
-        }) // Refetch chatroom messages when a new message arrives
-      })
-      socketClient.on("joinChatroom", () => {
-        queryClient.invalidateQueries({
-          queryKey: ["chatroom-by-id"],
+          queryKey: ["chatroomMessages", chatroomId],
           refetchType: "all",
         })
       })
     }
 
+    socketClient.on("new-member", () => {
+      queryClient.invalidateQueries({
+        queryKey: ["chatroomMessages", chatroomId],
+        refetchType: "all",
+      })
+    })
+
     return () => {
-      socketClient.off("newMessage")
+      socketClient.off("new-message")
+      socketClient.off("join-room")
       if (userBelongsToChatroom) {
-        socketClient.emit("leaveChatroom", id) // Leave the chatroom when unmounting
+        socketClient.emit("leave-room", chatroomId)
       }
     }
-  }, [id, queryClient, toast, userBelongsToChatroom])
+  }, [chatroomId, queryClient, userBelongsToChatroom])
 
-  // Handle sending a new message
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      postMessageMutation.mutate(newMessage)
-      setNewMessage("") // Clear the input field
+      postMessageMutation.mutate({
+        content: newMessage,
+        contentType: "user-message",
+      })
+      setNewMessage("")
     }
   }
+
+  useEffect(() => {
+    let doneOnce = false
+
+    if (!doneOnce) {
+      if (userBelongsToChatroom && user) {
+        /* socketClient.emit("join-room", {
+          chatroomId,
+          userName: user.name,
+          userId: user.id,
+        }) */
+      }
+    }
+
+    return () => {
+      doneOnce = Boolean(userBelongsToChatroom) && Boolean(user)
+    }
+  }, [])
 
   if (messagesLoading || usersLoading || chatIsLoading) {
     return <div>Loading...</div>
@@ -115,7 +127,7 @@ export function ChatroomPage(): JSX.Element {
       </Box>
 
       {/* Main Chatroom Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-[100%]">
         {/* Chat Messages */}
         <Box className="flex-1 p-4 overflow-y-auto bg-gray-700">
           {messages && messages.length ? (

@@ -3,19 +3,20 @@ import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { postRequest } from "src/lib/network/baseRequests"
 import useAuthStore from "src/store/authStore"
+import { TUser } from "src/lib/definitions"
 
 export function LoginPage(): JSX.Element {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [error, setError] = useState<string | null>(null)
-  const { setIsLoggedIn, setUserId } = useAuthStore()
+  const { setIsLoggedIn, setUser } = useAuthStore()
 
   const navigate = useNavigate()
 
   // Define mutation for login
   const loginMutation = useMutation({
     mutationFn: async () =>
-      postRequest<{ token: string; id: string }>("/auth/login", {
+      postRequest<{ token: string; user: TUser }>("/auth/login", {
         email,
         password,
       }),
@@ -25,7 +26,7 @@ export function LoginPage(): JSX.Element {
         console.log("login result data", data)
         localStorage.setItem("token", data.result.token)
         setIsLoggedIn(true)
-        setUserId(data.result.id)
+        setUser(data.result.user)
         navigate("/app") // Redirect to the homepage
       } else {
         setError("Login failed. Please check your credentials.")
@@ -83,6 +84,7 @@ export function LoginPage(): JSX.Element {
               id="password"
               className="w-full p-2 mt-1 bg-gray-700 border border-gray-600 rounded-md text-white"
               value={password}
+              autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
               required
             />

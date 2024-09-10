@@ -38,6 +38,7 @@ export async function seedDatabase(AppDataSource: DataSource) {
     content: "seeder message",
     user: userCreated, // The user who created the message
     chatroom: chatroomCreated, // The chatroom where the message was posted
+    contentType: "user-message",
   })
 
   await messageRepository.save(newMessage)

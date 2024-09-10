@@ -18,7 +18,7 @@ class UserService {
     email: string
     password: string
     name: string
-  }): Promise<UserSafe & { token: string }> {
+  }): Promise<{ user: UserSafe; token: string }> {
     const existingUser = await this.userQuery.findOneBy({ email: user.email })
     if (existingUser) {
       throw new Error("User with this email already exists.")
@@ -39,7 +39,7 @@ class UserService {
       { expiresIn: "7d" }
     )
 
-    return { ...newUser, token }
+    return { user: newUser, token }
   }
 
   async getUserById({ id }: { id: string }): Promise<UserSafe | null> {

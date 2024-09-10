@@ -1,6 +1,6 @@
 import { AppDataSource } from "src/lib/ormconfig"
 import { Chatroom } from "src/models/Chatroom"
-import { ChatroomMessage } from "src/models/ChatroomMessage"
+import { ChatroomMessage, MessageContentType } from "src/models/ChatroomMessage"
 import { User } from "src/models/User"
 
 class ChatroomRepository {
@@ -15,12 +15,12 @@ class ChatroomRepository {
     name: string
     userId: string
   }): Promise<Chatroom> {
-    console.log("create chatroom called")
+    // console.log("create chatroom called")
 
     const newChatroom = this.chatroomQuery.create({ name })
-    console.log("newChatroom", newChatroom)
+    // console.log("newChatroom", newChatroom)
     const savedChatroom = await this.chatroomQuery.save(newChatroom)
-    console.log("savedChatroom", savedChatroom)
+    // console.log("savedChatroom", savedChatroom)
 
     // Add the creator to the chatroom
     await this.addUserToChatroom({ chatroomId: savedChatroom.id, userId })
@@ -76,10 +76,12 @@ class ChatroomRepository {
     chatroomId,
     userId,
     content,
+    contentType,
   }: {
     chatroomId: string
     userId: string
     content: string
+    contentType: MessageContentType
   }): Promise<ChatroomMessage> {
     const chatroom = await this.chatroomQuery.findOneBy({ id: chatroomId })
     const user = await this.userQuery.findOneBy({ id: userId })
@@ -96,6 +98,7 @@ class ChatroomRepository {
       chatroom,
       user,
       content,
+      contentType,
     })
 
     return await this.chatroomMessageQuery.save(newMessage)

@@ -15,4 +15,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --header-height: 50px;
+}
+
+header {
+  height: var(--header-height) !important;
+}
+
+main {
+  height: calc(100svh - var(--header-height)) !important;
 }

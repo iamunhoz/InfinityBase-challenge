@@ -1,18 +1,43 @@
 import { Outlet } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { HeaderButtons } from "./HeaderButtons"
 import { Link } from "react-router-dom"
+import { useEffect } from "react"
+import useAuthStore from "src/store/authStore"
+// import { socketClient } from "src/lib/network/socket"
 
 export function AppLayout() {
+  const navigate = useNavigate()
+  const { setIsLoggedIn, setUser } = useAuthStore()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    const user = localStorage.getItem("user")
+
+    if (!token) {
+      console.log("DISCONNECTING")
+      // socketClient.disconnect()
+    }
+
+    if (
+      !token &&
+      !["/app/login", "/app/sign-up"].includes(window.location.pathname)
+    ) {
+      navigate("/app/login")
+      return
+    }
+
+    if (!user) {
+      return
+    }
+
+    setUser(JSON.parse(user))
+    setIsLoggedIn(true)
+  }, [])
+
   return (
-    <div
-      className="flex flex-col min-h-screen bg-gray-900 text-white"
-      // style={{ border: "1px solid red" }}
-    >
-      {/* Header */}
-      <header
-        className="bg-gray-800 p-1 shadow-md flex justify-between"
-        // style={{ border: "1px solid blue" }}
-      >
+    <div className="flex flex-col max-h-screen bg-gray-900 text-white">
+      <header className="bg-gray-800 p-1 shadow-md flex justify-between">
         <h1 className="text-2xl font-bold p-0 m-0">
           <Link
             to="/"
@@ -24,15 +49,11 @@ export function AppLayout() {
         <HeaderButtons />
       </header>
 
-      {/* Main Content */}
-      <main className="flex-grow flex">
+      <main className="flex">
         <Outlet />
       </main>
 
-      {/* Footer */}
-      <footer /* className="bg-gray-800 p-4 mt-auto" */>
-        {/* Empty footer for now */}
-      </footer>
+      <footer>{/* Empty footer for now */}</footer>
     </div>
   )
 }

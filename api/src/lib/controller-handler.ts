@@ -24,6 +24,10 @@ export async function handleRequestResponse<T>(
     })
     return res
       .status(500)
-      .json({ success: false, message: JSON.stringify(error), result: null })
+      .json({
+        success: false,
+        message: error.message || "Unknown error",
+        result: null,
+      })
   }
 }

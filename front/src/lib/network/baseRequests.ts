@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
+import { RequestResponse } from "../definitions"
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3000",
@@ -52,16 +53,6 @@ export const postRequest = async <T>(
     data: requestBody,
     headers,
   })
-
-type RequestResponse<T> =
-  | {
-      success: true
-      result: T
-    }
-  | {
-      success: false
-      error?: unknown
-    }
 
 type BaseResponse<T> = {
   data: RequestResponse<T>

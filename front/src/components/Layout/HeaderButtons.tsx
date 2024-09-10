@@ -1,36 +1,15 @@
-import { useNavigate } from "react-router-dom"
 // import { useEffect } from "react"
-import useAppStore from "src/store/authStore"
+import useAppStore, { useLogout } from "src/store/authStore"
 
 export function HeaderButtons(): JSX.Element {
-  const navigate = useNavigate()
-  const { isLoggedIn, setIsLoggedIn } = useAppStore()
-
-  /* useEffect(() => {
-    // Check if the user is logged in by checking localStorage for a token
-    const token = localStorage.getItem("token")
-    setIsLoggedIn(!!token)
-  }, []) */
-
-  /* const handleLogin = () => {
-    navigate("/app/login")
-  }
-
-  const handleSignUp = () => {
-    navigate("/app/sign-up") // Assuming you have a sign-up page
-  } */
-
-  const handleLogout = () => {
-    localStorage.removeItem("token") // Remove token to log out
-    setIsLoggedIn(false)
-    navigate("/")
-  }
+  const { isLoggedIn } = useAppStore()
+  const logout = useLogout()
 
   return (
     <div className="flex space-x-4">
       <button
-        className="py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md"
-        onClick={handleLogout}
+        className="py-2 px-4 hover:border hover:border-red-700 text-white rounded-md"
+        onClick={logout}
       >
         Logout
       </button>

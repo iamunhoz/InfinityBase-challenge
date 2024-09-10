@@ -1,7 +1,8 @@
 import ChatroomRepository from "src/api/chatroom/repository"
 import { UserRepository } from "src/api/user/repository"
 import { Chatroom, User } from "src/models"
-import Socket from "src/socket"
+import { MessageContentType } from "src/models/ChatroomMessage"
+import SocketInstance, { SocketCalls } from "src/socket"
 
 class ChatroomService {
   private chatroomRepository: ChatroomRepository
@@ -34,7 +35,7 @@ class ChatroomService {
     })
 
     if (chatroom) {
-      Socket.emitNewChatroom(chatroom)
+      SocketInstance.emit(SocketCalls.newChatroom, chatroom)
     }
     return chatroom
   }
@@ -50,8 +51,11 @@ class ChatroomService {
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
-    if (!chatroom) {
-      throw new Error("enterChatroom: Chatroom not found")
+
+    const user = await this.userRepository.getUserById({ id: userId })
+
+    if (!chatroom || !user) {
+      throw new Error("enterChatroom: Chatroom or User not found")
     }
 
     // Add user to chatroom
@@ -59,6 +63,14 @@ class ChatroomService {
       chatroomId,
       userId,
     })
+
+    await this.postMessageToChatroom({
+      chatroomId,
+      userId,
+      content: `${user.name} has joined the room`,
+      contentType: "system-message",
+    })
+
     return result
   }
 
@@ -73,8 +85,11 @@ class ChatroomService {
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
-    if (!chatroom) {
-      throw new Error("leaveChatroom: Chatroom not found")
+
+    const user = await this.userRepository.getUserById({ id: userId })
+
+    if (!chatroom || !user) {
+      throw new Error("enterChatroom: Chatroom or User not found")
     }
 
     // Remove user from chatroom
@@ -82,6 +97,14 @@ class ChatroomService {
       chatroomId,
       userId,
     })
+
+    await this.postMessageToChatroom({
+      chatroomId,
+      userId,
+      content: `${user.name} has left the room`,
+      contentType: "system-message",
+    })
+
     return result
   }
 
@@ -89,10 +112,12 @@ class ChatroomService {
     chatroomId,
     userId,
     content,
+    contentType,
   }: {
     chatroomId: string
     userId: string
     content: string
+    contentType: MessageContentType
   }) {
     // Ensure chatroom exists
     const chatroom = await this.chatroomRepository.getChatroomById({
@@ -104,21 +129,30 @@ class ChatroomService {
 
     const user = await this.userRepository.getUserById({ id: userId })
     if (!user) {
-      throw new Error("User not found")
+      throw new Error("postMessageToChatroom: User not found")
     }
 
     const isUserInChatroom = chatroom.users.some(
       (chatUser) => chatUser.id === userId
     )
-    if (!isUserInChatroom) {
-      throw new Error("User does not belong to this chatroom")
+    if (!isUserInChatroom && contentType !== "system-message") {
+      throw new Error(
+        "postMessageToChatroom: User does not belong to this chatroom"
+      )
     }
 
     const message = await this.chatroomRepository.postMessageToChatroom({
       chatroomId,
       userId,
       content,
+      contentType,
     })
+
+    SocketInstance.emit(SocketCalls.newMessage, {
+      chatroomId,
+      message: content,
+    })
+
     return message
   }
 
@@ -151,7 +185,7 @@ class ChatroomService {
       chatroomId,
     })
 
-    console.log("messages", messages)
+    // console.log("messages", messages)
 
     return messages
   }

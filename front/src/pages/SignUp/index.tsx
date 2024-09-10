@@ -3,27 +3,32 @@ import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { postRequest } from "src/lib/network/baseRequests"
 import useAppStore from "src/store/authStore"
+import { RequestResponse, TUser } from "src/lib/definitions"
 
 export function SignUpPage(): JSX.Element {
   const [name, setName] = useState<string>("seconduser")
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [error, setError] = useState<string | null>(null)
-  const { setIsLoggedIn } = useAppStore()
+  const { setIsLoggedIn, setUser } = useAppStore()
 
   const navigate = useNavigate()
 
   // Define mutation for sign-up
   const signUpMutation = useMutation({
     mutationFn: async () =>
-      postRequest<any>("/user/new", { name, email, password }),
-    onSuccess: (data: any) => {
+      postRequest<{ user: TUser; token: string }>("/user/new", {
+        name,
+        email,
+        password,
+      }),
+    onSuccess: (data: RequestResponse<{ user: TUser; token: string }>) => {
       console.log("postrequest mutation result", data)
       if (data.success) {
-        // Store the token in localStorage
         localStorage.setItem("token", data.result.token)
         setIsLoggedIn(true)
-        navigate("/app") // Redirect to the homepage
+        setUser(data.result.user)
+        navigate("/app")
       } else {
         setError("Sign-up failed. Please try again.")
         setIsLoggedIn(false)
