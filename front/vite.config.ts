@@ -11,16 +11,19 @@ import * as path from "path"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      src: path.resolve(__dirname, "./src"),
+export default defineConfig(({ command }) => {
+  return {
+    plugins: [react()],
+    base: command === "build" ? "/disclonecord/" : "/",
+    resolve: {
+      alias: {
+        src: path.resolve(__dirname, "./src"),
+      },
     },
-  },
-  css: {
-    postcss: {
-      plugins: [tailwindcss],
+    css: {
+      postcss: {
+        plugins: [tailwindcss],
+      },
     },
-  },
+  }
 })

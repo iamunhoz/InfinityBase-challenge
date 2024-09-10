@@ -8,9 +8,11 @@ import { SignUpPage } from "./pages/SignUp"
 import { DashboardPage } from "./pages/Dashboard"
 
 function App() {
+  const basename = import.meta.env.MODE === "production" ? "/disclonecord" : "/"
+
   return (
     <ChakraProvider>
-      <Router>
+      <Router basename={basename}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/app" element={<AppLayout />}>
