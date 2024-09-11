@@ -1,5 +1,5 @@
 import { Express } from "express"
-import { Server, Socket } from "socket.io"
+import { Server } from "socket.io"
 import http from "http"
 import { serverData } from "src/lib/config"
 import { Chatroom } from "src/models"
@@ -18,13 +18,12 @@ class SocketIo {
   private io: Server | null = null
   private static instance: SocketIo
   private _socket
-  // private socketEmitter: Socket | null = null
 
   constructor() {
     this.initialize = this.initialize.bind(this)
     this.emitNewChatroom = this.emitNewChatroom.bind(this)
     this.emitNewMessage = this.emitNewMessage.bind(this)
-    this._socket = socket("http://localhost:3001")
+    this._socket = socket("http://localhost:4001") // self: talvez precise por dominio
   }
 
   async initialize(app: Express) {

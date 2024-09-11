@@ -2,7 +2,10 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios"
 import { RequestResponse } from "../definitions"
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL:
+    import.meta.env.MODE === "production"
+      ? "https://enso.online:3000"
+      : "http://localhost:4000",
 })
 
 // Set up an interceptor to add the Authorization header

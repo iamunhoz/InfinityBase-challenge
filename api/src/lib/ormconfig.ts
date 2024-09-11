@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   password: "Nove10valete",
   database: "discord_clone",
   entities: [User, Chatroom, ChatroomMessage, UserToUserMessage],
-  synchronize: true,
+  synchronize: process.env.NODE_ENV === "development",
   dropSchema: process.env.NODE_ENV === "development",
   logging: false,
   migrations: ["src/migration/*.ts"],
