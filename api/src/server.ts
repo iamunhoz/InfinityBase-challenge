@@ -11,9 +11,9 @@ app.use(express.json())
 
 app.use(
   cors({
-    origin: "*", // Replace with your front-end domain or '*' to allow all origins
-    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
-    credentials: true, // Allow credentials (cookies, authorization headers)
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 )
 

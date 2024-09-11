@@ -4,7 +4,7 @@
     "module": "commonjs",
     "baseUrl": "./",
     "outDir": "dist",
-    "experimentalDecorators": true, // Enables experimental decorator support
+    "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
       "src/*": ["src/*"]

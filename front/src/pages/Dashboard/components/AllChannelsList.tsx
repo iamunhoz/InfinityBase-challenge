@@ -11,8 +11,6 @@ export function AllChannelsList(): JSX.Element {
   useEffect(() => {
     // Listen for new chatroom notifications
     socketClient.on("newChatroom", (newChatroom) => {
-      // console.log("New chatroom available:", newChatroom)
-
       // Optionally, refetch the chatrooms list when a new chatroom is added
       queryClient.invalidateQueries({
         queryKey: ["chatrooms"],

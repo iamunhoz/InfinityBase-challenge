@@ -22,13 +22,11 @@ class ChatroomService {
   }
 
   async createChatroom({ name, userId }: { name: string; userId: string }) {
-    // Ensure user exists
     const user = await this.userRepository.getUserById({ id: userId })
     if (!user) {
       throw new Error("User not found")
     }
 
-    // Create the chatroom
     const chatroom = await this.chatroomRepository.createChatroom({
       name,
       userId,
@@ -47,7 +45,6 @@ class ChatroomService {
     chatroomId: string
     userId: string
   }): Promise<Chatroom | null> {
-    // Ensure chatroom exists
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
@@ -58,7 +55,6 @@ class ChatroomService {
       throw new Error("enterChatroom: Chatroom or User not found")
     }
 
-    // Add user to chatroom
     const result = await this.chatroomRepository.addUserToChatroom({
       chatroomId,
       userId,
@@ -81,7 +77,6 @@ class ChatroomService {
     chatroomId: string
     userId: string
   }) {
-    // Ensure chatroom exists
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
@@ -92,7 +87,6 @@ class ChatroomService {
       throw new Error("enterChatroom: Chatroom or User not found")
     }
 
-    // Remove user from chatroom
     const result = await this.chatroomRepository.removeUserFromChatroom({
       chatroomId,
       userId,
@@ -119,7 +113,6 @@ class ChatroomService {
     content: string
     contentType: MessageContentType
   }) {
-    // Ensure chatroom exists
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
@@ -157,13 +150,11 @@ class ChatroomService {
   }
 
   async getChatrooms() {
-    // Get all chatrooms for the user
     const chatrooms = await this.chatroomRepository.getChatrooms()
     return chatrooms
   }
 
   async getChatroomsForUser({ userId }: { userId: string }) {
-    // Get all chatrooms for the user
     const chatrooms = await this.chatroomRepository.getChatroomsForUser({
       userId,
     })
@@ -171,7 +162,6 @@ class ChatroomService {
   }
 
   async getMessagesFromChatroom({ chatroomId }: { chatroomId: string }) {
-    // Ensure chatroom exists
     const chatroom = await this.chatroomRepository.getChatroomById({
       chatroomId,
     })
@@ -180,12 +170,9 @@ class ChatroomService {
       throw new Error("getMessagesFromChatroom: Chatroom not found")
     }
 
-    // Get all messages from the chatroom
     const messages = await this.chatroomRepository.getMessagesFromChatroom({
       chatroomId,
     })
-
-    // console.log("messages", messages)
 
     return messages
   }
@@ -199,7 +186,6 @@ class ChatroomService {
     messageId: string
     userId: string
   }) {
-    // Ensure message exists in the chatroom
     const message = await this.chatroomRepository.getMessageById({
       chatroomId,
       messageId,
@@ -211,7 +197,6 @@ class ChatroomService {
       )
     }
 
-    // Delete the message
     const result = await this.chatroomRepository.deleteMessageFromChatroom({
       messageId,
     })
@@ -231,7 +216,7 @@ class ChatroomService {
       throw new Error("listUsersInChatroom: Chatroom not found")
     }
 
-    return chatroom.users // Return the list of users
+    return chatroom.users
   }
 }
 

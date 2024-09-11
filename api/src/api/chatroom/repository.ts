@@ -15,14 +15,8 @@ class ChatroomRepository {
     name: string
     userId: string
   }): Promise<Chatroom> {
-    // console.log("create chatroom called")
-
     const newChatroom = this.chatroomQuery.create({ name })
-    // console.log("newChatroom", newChatroom)
     const savedChatroom = await this.chatroomQuery.save(newChatroom)
-    // console.log("savedChatroom", savedChatroom)
-
-    // Add the creator to the chatroom
     await this.addUserToChatroom({ chatroomId: savedChatroom.id, userId })
 
     return savedChatroom
@@ -35,7 +29,7 @@ class ChatroomRepository {
   }): Promise<Chatroom | null> {
     const chatroom = await this.chatroomQuery.findOne({
       where: { id: chatroomId },
-      relations: ["users", "messages"], // Load related users and messages if needed
+      relations: ["users", "messages"],
     })
     return chatroom || null
   }
@@ -52,7 +46,7 @@ class ChatroomRepository {
 
     if (chatroom && user) {
       chatroom.users.push(user)
-      return await this.chatroomQuery.save(chatroom) // Save the updated chatroom with the new user
+      return await this.chatroomQuery.save(chatroom)
     }
 
     return null
@@ -69,7 +63,7 @@ class ChatroomRepository {
     if (!chatroom) throw new Error("removeUserFromChatroom: Chatroom not found")
 
     chatroom.users = chatroom.users.filter((user) => user.id !== userId)
-    await this.chatroomQuery.save(chatroom) // Save the updated chatroom without the user
+    await this.chatroomQuery.save(chatroom)
   }
 
   async postMessageToChatroom({
@@ -86,7 +80,6 @@ class ChatroomRepository {
     const chatroom = await this.chatroomQuery.findOneBy({ id: chatroomId })
     const user = await this.userQuery.findOneBy({ id: userId })
 
-    // Ensure the chatroom and user exist
     if (!chatroom) {
       throw new Error("postMessageToChatroom: Chatroom not found")
     }
@@ -134,8 +127,8 @@ class ChatroomRepository {
   }): Promise<ChatroomMessage[]> {
     const messages = await this.chatroomMessageQuery.find({
       where: { chatroom: { id: chatroomId } },
-      relations: ["user"], // If you need to load the user who sent each message
-      order: { createdAt: "ASC" }, // Optionally order by creation time
+      relations: ["user"],
+      order: { createdAt: "ASC" },
     })
 
     return messages

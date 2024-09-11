@@ -1,4 +1,3 @@
-// import { useEffect } from "react"
 import useAppStore, { useLogout } from "src/store/authStore"
 
 export function HeaderButtons(): JSX.Element {
@@ -7,28 +6,14 @@ export function HeaderButtons(): JSX.Element {
 
   return (
     <div className="flex space-x-4">
-      <button
-        className="py-2 px-4 hover:border hover:border-red-700 text-white rounded-md"
-        onClick={logout}
-      >
-        Logout
-      </button>
-      {isLoggedIn ? (
-        <></>
-      ) : (
+      {isLoggedIn && (
         <>
-          {/* <button
-            className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
-            onClick={handleLogin}
-          >
-            Login
-          </button>
           <button
-            className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded-md"
-            onClick={handleSignUp}
+            className="py-2 px-4 hover:border hover:border-red-700 text-white rounded-md"
+            onClick={logout}
           >
-            Sign Up
-          </button> */}
+            Logout
+          </button>
         </>
       )}
     </div>

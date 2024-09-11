@@ -45,7 +45,6 @@ class ChatroomController {
     return handleRequestResponse(req, res, async () => {
       const { chatroomId } = req.body
       const userId = res.locals.jwtVerification.id
-      // console.log("chatroomId, userId", chatroomId, userId)
       return await ChatroomService.enterChatroom({ chatroomId, userId })
     })
   }

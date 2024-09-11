@@ -1,5 +1,3 @@
-import React from "react"
-
 // Mock data for direct messages
 const directMessages = [
   { id: 1, userName: "JohnDoe", lastMessage: "Hey, how’s it going?" },

@@ -4,7 +4,6 @@ import { HeaderButtons } from "./HeaderButtons"
 import { Link } from "react-router-dom"
 import { useEffect } from "react"
 import useAuthStore from "src/store/authStore"
-// import { socketClient } from "src/lib/network/socket"
 
 export function AppLayout() {
   const navigate = useNavigate()

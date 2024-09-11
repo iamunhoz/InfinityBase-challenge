@@ -22,7 +22,7 @@ export class User {
   @Column()
   password!: string
 
-  @Column({ default: "Anonymous" }) // Add the new column for 'name'
+  @Column({ default: "Anonymous" })
   name!: string
 
   @ManyToMany(() => User, (user) => user.friends)
@@ -30,7 +30,7 @@ export class User {
   friends!: User[]
 
   @ManyToMany(() => Chatroom, (chatroom) => chatroom.users)
-  @JoinTable() // You need a join table here
+  @JoinTable()
   chatrooms!: Chatroom[]
 
   @OneToMany(() => ChatroomMessage, (message) => message.user)

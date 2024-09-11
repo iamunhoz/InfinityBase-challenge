@@ -155,7 +155,7 @@ export function ChatroomPage(): JSX.Element {
             }}
             className="flex-1 mr-4"
             size="lg"
-            isDisabled={!userBelongsToChatroom} // Disable input if the user hasn't joined
+            isDisabled={!userBelongsToChatroom}
           />
           <Button
             onClick={handleSendMessage}

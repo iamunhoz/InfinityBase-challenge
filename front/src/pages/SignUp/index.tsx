@@ -23,7 +23,6 @@ export function SignUpPage(): JSX.Element {
         password,
       }),
     onSuccess: (data: RequestResponse<{ user: TUser; token: string }>) => {
-      console.log("postrequest mutation result", data)
       if (data.success) {
         localStorage.setItem("token", data.result.token)
         setIsLoggedIn(true)
@@ -42,8 +41,8 @@ export function SignUpPage(): JSX.Element {
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null) // Clear previous errors
-    signUpMutation.mutate() // Trigger mutation
+    setError(null)
+    signUpMutation.mutate()
   }
 
   return (
@@ -106,7 +105,7 @@ export function SignUpPage(): JSX.Element {
             <button
               type="submit"
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
-              disabled={signUpMutation.isPending} // Disable button during loading
+              disabled={signUpMutation.isPending}
             >
               {signUpMutation.isPending ? "Signing up..." : "Sign Up"}
             </button>

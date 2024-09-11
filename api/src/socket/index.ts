@@ -23,7 +23,7 @@ class SocketIo {
     this.initialize = this.initialize.bind(this)
     this.emitNewChatroom = this.emitNewChatroom.bind(this)
     this.emitNewMessage = this.emitNewMessage.bind(this)
-    this._socket = socket("http://localhost:4001") // self: talvez precise por dominio
+    this._socket = socket("http://localhost:4001")
   }
 
   async initialize(app: Express) {
@@ -35,19 +35,11 @@ class SocketIo {
       },
     })
 
-    // Handle socket connections
     this.io.on("connection", (socket) => {
-      // this.socketEmitter = socket
       console.log("new socket client:", socket.id)
 
-      socket.onAny((data) => {
-        console.log("=========socketinfoend============")
-        console.log("socket calls", data)
-        console.log("=========socketinfoend============")
-      })
-
       socket.on(
-        "join-room",
+        SocketCalls.joinRoom,
         ({
           chatroomId,
           userName,
@@ -73,7 +65,6 @@ class SocketIo {
           if (this.io) {
             this.io.emit(SocketCalls.newMessage, { message, userId: socket.id })
           }
-          /* ?.to(chatroomId) */
         }
       )
 
@@ -116,12 +107,8 @@ class SocketIo {
 
   /** warn chatroom members that a new message has arrived */
   emitNewMessage(dto: { chatroomId: string; message: string }) {
-    console.log(
-      "emitNewMessage(dto: { chatroomId: string; message: string }) called"
-    )
     if (this.io) {
-      const result = this.io.emit(SocketCalls.newMessage, dto)
-      console.log("emit result", result)
+      this.io.emit(SocketCalls.newMessage, dto)
     }
   }
 }

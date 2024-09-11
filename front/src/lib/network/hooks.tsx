@@ -1,8 +1,6 @@
-// self: split-refactor after line 300
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query"
 import { TChatroom, TChatroomMessage, TUser } from "../definitions"
 import { getRequest, postRequest } from "./baseRequests"
-import { socketClient } from "./socket"
 import { useLogout } from "src/store/authStore"
 
 /**
@@ -101,14 +99,15 @@ export function useGetChatroomData(chatroomId: string) {
 }
 
 /** join classroom */
-export function useJoinChatroomMutation(
-  {
-    chatroomId,
-    userName,
-    userId,
-  }: { chatroomId: string; userName: string; userId: string }
-  // successCb: () => void
-) {
+export function useJoinChatroomMutation({
+  chatroomId,
+  userName,
+  userId,
+}: {
+  chatroomId: string
+  userName: string
+  userId: string
+}) {
   return useMutation({
     mutationFn: () => postRequest(`/chatroom/enter`, { chatroomId }),
     onSuccess: () => {
@@ -116,3 +115,5 @@ export function useJoinChatroomMutation(
     },
   })
 }
+
+// self: split-refactor after line 300

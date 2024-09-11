@@ -27,7 +27,7 @@ export function LoginPage(): JSX.Element {
         localStorage.setItem("token", data.result.token)
         setIsLoggedIn(true)
         setUser(data.result.user)
-        navigate("/app") // Redirect to the homepage
+        navigate("/app")
       } else {
         setError("Login failed. Please check your credentials.")
         setIsLoggedIn(false)
@@ -41,8 +41,8 @@ export function LoginPage(): JSX.Element {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null) // Clear previous errors
-    loginMutation.mutate() // Trigger mutation
+    setError(null)
+    loginMutation.mutate()
   }
 
   const handleForgotPassword = () => {
@@ -94,7 +94,7 @@ export function LoginPage(): JSX.Element {
             <button
               type="submit"
               className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
-              disabled={loginMutation.isPending} // Disable button during loading
+              disabled={loginMutation.isPending}
             >
               {loginMutation.isPending ? "Logging in..." : "Log In"}
             </button>
