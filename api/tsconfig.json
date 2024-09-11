@@ -3,6 +3,7 @@
     "target": "ESNext",
     "module": "commonjs",
     "baseUrl": "./",
+    "outDir": "dist",
     "experimentalDecorators": true, // Enables experimental decorator support
     "emitDecoratorMetadata": true,
     "paths": {
