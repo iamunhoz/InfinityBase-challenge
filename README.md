@@ -1,7 +1,3 @@
-Here's a structured README draft based on the details you provided:
-
----
-
 # **Disclonecord**
 
 A real-time web chat application with authentication, using modern web technologies. This monorepo contains both the backend (Node API) and the frontend (Vite React app), as well as infrastructure setup for Docker, Apache2, and PostgreSQL.
