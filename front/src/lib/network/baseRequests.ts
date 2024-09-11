@@ -4,7 +4,7 @@ import { RequestResponse } from "../definitions"
 const axiosInstance = axios.create({
   baseURL:
     import.meta.env.MODE === "production"
-      ? "https://enso.online:3000"
+      ? "https://ensoholic.online:3000"
       : "http://localhost:4000",
 })
 
