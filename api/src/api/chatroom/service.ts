@@ -2,7 +2,7 @@ import ChatroomRepository from "src/api/chatroom/repository"
 import { UserRepository } from "src/api/user/repository"
 import { Chatroom, User } from "src/models"
 import { MessageContentType } from "src/models/ChatroomMessage"
-import SocketInstance, { SocketCalls } from "src/socket"
+import SocketInstance, { SocketEvent } from "src/socket"
 
 class ChatroomService {
   private chatroomRepository: ChatroomRepository
@@ -33,7 +33,7 @@ class ChatroomService {
     })
 
     if (chatroom) {
-      SocketInstance.emit(SocketCalls.newChatroom, chatroom)
+      SocketInstance.emit(SocketEvent.newChatroom, chatroom)
     }
     return chatroom
   }
@@ -67,6 +67,12 @@ class ChatroomService {
       contentType: "system-message",
     })
 
+    SocketInstance.emit(SocketEvent.joinRoom, {
+      chatroomId,
+      userName: user.name,
+      userId,
+    })
+
     return result
   }
 
@@ -97,6 +103,10 @@ class ChatroomService {
       userId,
       content: `${user.name} has left the room`,
       contentType: "system-message",
+    })
+
+    SocketInstance.emit(SocketEvent.leftRoom, {
+      chatroomId,
     })
 
     return result
@@ -141,7 +151,7 @@ class ChatroomService {
       contentType,
     })
 
-    SocketInstance.emit(SocketCalls.newMessage, {
+    SocketInstance.emit(SocketEvent.newMessage, {
       chatroomId,
       message: content,
     })

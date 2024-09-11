@@ -115,7 +115,8 @@ class ChatroomRepository {
       relations: ["chatrooms"],
     })
 
-    if (!user) throw new Error("User not found")
+    if (!user)
+      throw new Error("chatroom.repository.getChatroomsForUser: User not found")
 
     return user.chatrooms
   }

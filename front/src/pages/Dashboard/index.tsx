@@ -1,7 +1,7 @@
-import { AllChannelsList } from "./components/AllChannelsList"
-import { SubscribedChannelsList } from "./components/SubscribedChannelsList"
 import { DirectMessagesList } from "./components/DirectMessagesList"
 import { CreateNewChannelButton } from "./components/CreateNewChannelButton"
+import { SubscribedChannelsList } from "./components/SubscribedChannelsList"
+import { AllChannelsList } from "./components/AllChannelsList"
 
 export function DashboardPage(): JSX.Element {
   return (
@@ -13,6 +13,7 @@ export function DashboardPage(): JSX.Element {
         {/* List of all available channels */}
         <AllChannelsList />
 
+        {/* Button to create a new channel */}
         <div className="mt-auto">
           <CreateNewChannelButton />
         </div>
@@ -30,8 +31,6 @@ export function DashboardPage(): JSX.Element {
 
         {/* List of direct messages */}
         <DirectMessagesList />
-
-        {/* Button to create a new channel */}
       </div>
     </div>
   )

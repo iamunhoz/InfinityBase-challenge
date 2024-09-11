@@ -76,6 +76,13 @@ class ChatroomController {
   async getChatroomsForUser(req: Request, res: Response) {
     return handleRequestResponse(req, res, async () => {
       const userId = res.locals.jwtVerification.id
+
+      console.log(
+        "userId, res.locals.jwtVerification",
+        userId,
+        res.locals.jwtVerification
+      )
+
       return await ChatroomService.getChatroomsForUser({ userId })
     })
   }

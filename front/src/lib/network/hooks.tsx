@@ -2,6 +2,7 @@ import { QueryClient, useMutation, useQuery } from "@tanstack/react-query"
 import { TChatroom, TChatroomMessage, TUser } from "../definitions"
 import { getRequest, postRequest } from "./baseRequests"
 import { useLogout } from "src/store/authStore"
+import { QueryKey } from "../definitions/enumerations"
 
 /**
  Fetch all chatrooms
@@ -9,13 +10,31 @@ import { useLogout } from "src/store/authStore"
 export function useChatrooms() {
   const logout = useLogout()
   return useQuery<TChatroom[], Error>({
-    queryKey: ["chatrooms"],
+    queryKey: [QueryKey.chatrooms],
     queryFn: () =>
-      getRequest<TChatroom[]>("/chatroom").then((response) => {
+      getRequest<TChatroom[]>(`/chatroom`).then((response) => {
         if (response.success) {
           return response.result
         } else {
           logout()
+          return []
+        }
+      }),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
+  })
+}
+
+export function useChatroomsByUser() {
+  // const logout = useLogout()
+  return useQuery<TChatroom[], Error>({
+    queryKey: [QueryKey.chatroomsByUser],
+    queryFn: () =>
+      getRequest<TChatroom[]>(`/chatroom/byuser`).then((response) => {
+        if (response.success) {
+          return response.result
+        } else {
+          // logout()
           return []
         }
       }),
@@ -70,7 +89,7 @@ export function useChatroomUsers(chatroomId: string) {
   const logout = useLogout()
 
   return useQuery<TUser[], Error>({
-    queryKey: ["chatroomUsers", chatroomId],
+    queryKey: [QueryKey.chatroomUsers, chatroomId],
     queryFn: () =>
       getRequest<TUser[]>(`/chatroom/${chatroomId}/users`).then((response) => {
         if (response.success) {
@@ -88,7 +107,7 @@ export function useChatroomUsers(chatroomId: string) {
 /** get more detailed data of the chatroom */
 export function useGetChatroomData(chatroomId: string) {
   return useQuery<TChatroom | null>({
-    queryKey: ["chatroom-by-id", chatroomId],
+    queryKey: [QueryKey.chatroomById, chatroomId],
     queryFn: () =>
       getRequest<TChatroom | null>(
         `/chatroom/byid?chatroomId=${chatroomId}`
@@ -99,21 +118,12 @@ export function useGetChatroomData(chatroomId: string) {
 }
 
 /** join classroom */
-export function useJoinChatroomMutation({
-  chatroomId,
-  userName,
-  userId,
-}: {
-  chatroomId: string
-  userName: string
-  userId: string
-}) {
+export function useJoinChatroomMutation(dto: { chatroomId: string }) {
   return useMutation({
-    mutationFn: () => postRequest(`/chatroom/enter`, { chatroomId }),
-    onSuccess: () => {
-      /* socketClient.emit("join-room", { chatroomId, userName, userId }), */
-    },
+    mutationFn: () => postRequest(`/chatroom/enter`, dto),
   })
 }
+
+// self: trazer os mutations de login e signup pra cá
 
 // self: split-refactor after line 300

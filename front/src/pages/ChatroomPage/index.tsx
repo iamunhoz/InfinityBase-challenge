@@ -11,12 +11,13 @@ import {
   usePostMessage,
 } from "src/lib/network/hooks"
 import useAuthStore from "src/store/authStore"
+import { QueryKey, SocketEvent } from "src/lib/definitions/enumerations"
 
 export function ChatroomPage(): JSX.Element {
   const { id } = useParams<{ id: string }>()
   const chatroomId = id ? id : ""
   const { data: chatroom, isLoading: chatIsLoading } =
-    useGetChatroomData(chatroomId)
+    useGetChatroomData(chatroomId) // QueryKey.chatroomById
   const { user } = useAuthStore()
 
   const userBelongsToChatroom = chatroom?.users.some(
@@ -34,8 +35,6 @@ export function ChatroomPage(): JSX.Element {
 
   const joinChatroomMutation = useJoinChatroomMutation({
     chatroomId,
-    userId: user.id as string,
-    userName: user.name as string,
   })
 
   useEffect(() => {
@@ -46,6 +45,7 @@ export function ChatroomPage(): JSX.Element {
           queryKey: ["chatroomMessages", chatroomId],
           refetchType: "all",
         })
+        //[QueryKey.chatroomUsers, chatroomId]
       })
     }
 
@@ -56,11 +56,26 @@ export function ChatroomPage(): JSX.Element {
       })
     })
 
+    socketClient.on(SocketEvent.joinRoom, (data) => {
+      console.log("socketClient.on SocketEvent.joinRoom, data", data)
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.chatroomById, chatroomId],
+        refetchType: "all",
+      })
+      queryClient.invalidateQueries({
+        queryKey: [QueryKey.chatroomUsers, chatroomId],
+        refetchType: "all",
+      })
+    })
+
     return () => {
       socketClient.off("new-message")
       socketClient.off("join-room")
       if (userBelongsToChatroom) {
-        socketClient.emit("leave-room", chatroomId)
+        postMessageMutation.mutate({
+          content: `${user.name} left the room.`,
+          contentType: "system-message",
+        })
       }
     }
   }, [chatroomId, queryClient, userBelongsToChatroom])

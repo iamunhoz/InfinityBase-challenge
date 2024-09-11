@@ -39,6 +39,12 @@ chatroomRouter.get(
 )
 
 chatroomRouter.get(
+  "/byuser",
+  AuthMiddleware.check,
+  ChatroomController.getChatroomsForUser
+)
+
+chatroomRouter.get(
   "/byid",
   /* AuthMiddleware.check, */ ChatroomController.getChatroomById
 )

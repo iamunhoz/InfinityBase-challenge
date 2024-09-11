@@ -20,9 +20,9 @@
 }
 
 header {
-  height: var(--header-height) !important;
+  height: var(--header-height);
 }
 
 main {
-  height: calc(100svh - var(--header-height)) !important;
+  height: calc(100svh - var(--header-height));
 }
