@@ -23,7 +23,7 @@ This project is a real-time chat platform that includes features such as user au
 
 ### **Live Demo**
 
-[Live demo of the chat application](https://enso.online/disclonecord)
+[Live demo of the chat application](https://ensoholic.online/disclonecord)
 
 ---
 
