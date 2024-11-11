@@ -22,7 +22,7 @@ axiosInstance.interceptors.request.use(
   }
 )
 
-type RequestBody = Record<any, unknown> | FormData
+type RequestBody = Record<string, unknown> | FormData
 
 export const getRequest = async <T>(url: string) =>
   await apiRequest<T>({

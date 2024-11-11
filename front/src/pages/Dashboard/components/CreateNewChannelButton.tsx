@@ -39,7 +39,7 @@ export function CreateNewChannelButton(): JSX.Element {
       })
       onClose()
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Error creating channel.",
         description: error?.message || "An error occurred.",

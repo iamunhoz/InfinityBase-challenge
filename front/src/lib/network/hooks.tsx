@@ -4,6 +4,8 @@ import { getRequest, postRequest } from "./baseRequests"
 import { useLogout } from "src/store/authStore"
 import { QueryKey } from "../definitions/enumerations"
 
+const minutes = (m: number) => 1000 * 60 * m
+
 /**
  Fetch all chatrooms
  * */
@@ -20,7 +22,7 @@ export function useChatrooms() {
           return []
         }
       }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: minutes(5),
     refetchOnWindowFocus: true,
   })
 }
@@ -38,7 +40,7 @@ export function useChatroomsByUser() {
           return []
         }
       }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: minutes(5),
     refetchOnWindowFocus: true,
   })
 }
@@ -60,7 +62,7 @@ export function useChatroomMessages(chatroomId: string) {
           }
         }
       ),
-    staleTime: 1000 * 60 * 5,
+    staleTime: minutes(5),
     refetchOnWindowFocus: true,
   })
 }
@@ -99,7 +101,7 @@ export function useChatroomUsers(chatroomId: string) {
           return []
         }
       }),
-    staleTime: 1000 * 60 * 5,
+    staleTime: minutes(5),
     refetchOnWindowFocus: true,
   })
 }
@@ -112,7 +114,7 @@ export function useGetChatroomData(chatroomId: string) {
       getRequest<TChatroom | null>(
         `/chatroom/byid?chatroomId=${chatroomId}`
       ).then((response) => (response.success ? response.result : null)),
-    staleTime: 1000 * 60 * 5,
+    staleTime: minutes(5),
     refetchOnWindowFocus: true,
   })
 }

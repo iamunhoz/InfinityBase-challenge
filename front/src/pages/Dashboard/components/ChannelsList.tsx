@@ -1,9 +1,4 @@
-import { useChatrooms } from "src/lib/network/hooks"
-import { useQueryClient } from "@tanstack/react-query"
-import { useEffect } from "react"
 import { Link } from "react-router-dom"
-import { socketClient } from "src/lib/network/socket"
-import { QueryKey, SocketEvent } from "src/lib/definitions/enumerations"
 import { TChatroom } from "src/lib/definitions"
 
 type ChannelsListProps = {

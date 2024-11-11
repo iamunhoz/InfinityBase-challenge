@@ -78,7 +78,13 @@ export function ChatroomPage(): JSX.Element {
         })
       }
     }
-  }, [chatroomId, queryClient, userBelongsToChatroom])
+  }, [
+    chatroomId,
+    postMessageMutation,
+    queryClient,
+    user.name,
+    userBelongsToChatroom,
+  ])
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -89,24 +95,6 @@ export function ChatroomPage(): JSX.Element {
       setNewMessage("")
     }
   }
-
-  useEffect(() => {
-    let doneOnce = false
-
-    if (!doneOnce) {
-      if (userBelongsToChatroom && user) {
-        /* socketClient.emit("join-room", {
-          chatroomId,
-          userName: user.name,
-          userId: user.id,
-        }) */
-      }
-    }
-
-    return () => {
-      doneOnce = Boolean(userBelongsToChatroom) && Boolean(user)
-    }
-  }, [])
 
   if (messagesLoading || usersLoading || chatIsLoading) {
     return <div>Loading...</div>
@@ -133,7 +121,7 @@ export function ChatroomPage(): JSX.Element {
         <h2 className="text-xl font-bold mb-4">Online Users</h2>
         <ul>
           {users &&
-            users.map((user: any) => (
+            users.map((user) => (
               <li key={user.id} className="text-white mb-2">
                 {user.name}
               </li>
@@ -146,7 +134,7 @@ export function ChatroomPage(): JSX.Element {
         {/* Chat Messages */}
         <Box className="flex-1 p-4 overflow-y-auto bg-gray-700">
           {messages && messages.length ? (
-            messages.map((message: any) => (
+            messages.map((message) => (
               <div key={message.id} className="mb-4">
                 <div className="text-white font-bold">{message.user.name}:</div>
                 <div className="text-gray-300">{message.content}</div>
